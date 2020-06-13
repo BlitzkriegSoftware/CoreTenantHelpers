@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.10.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlitzkriegSoftware.Tenant.Libary\BlitzkriegSoftware.Tenant.Libary.csproj" />
+    <ProjectReference Include="..\BlitzkriegSoftware.Tenant.MongoProvider\BlitzkriegSoftware.Tenant.MongoProvider.csproj" />
+  </ItemGroup>
+
+</Project>
