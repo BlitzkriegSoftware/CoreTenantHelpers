@@ -88,6 +88,7 @@ namespace BlitzkriegSoftware.Tenant.Demo.Seeder
                       new KeyValuePair<string, string>("TenantDb", t.ToString())
                     }
                 };
+                Console.WriteLine(model.ToString());
                 TenantProvider.TenantAddUpdate(model);
             }
 
@@ -109,6 +110,8 @@ namespace BlitzkriegSoftware.Tenant.Demo.Seeder
                 }
 
                 model.SettingsPut("ct", ct.ToString());
+
+                Console.WriteLine(model.ToString());
 
                 UserProvider.Write(model);
                 ct++;

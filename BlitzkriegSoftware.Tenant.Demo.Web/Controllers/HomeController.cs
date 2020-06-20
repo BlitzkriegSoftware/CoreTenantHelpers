@@ -48,6 +48,7 @@ namespace BlitzkriegSoftware.Tenant.Demo.Web.Controllers
         /// <param name="returnUrl"></param>
         /// <returns></returns>
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult SetLanguage(string culture, string returnUrl)
         {
             this.Response.Cookies.Append(

@@ -25,5 +25,14 @@ namespace BlitzkriegSoftware.Tenant
         /// Configuration
         /// </summary>
         public IEnumerable<KeyValuePair<string, string>> Configuration { get; set; }
+
+        /// <summary>
+        /// Debug String
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return $"{this._id}, {this?.Contact.DisplayName}, {this?.Contact.ContactName}";
+        }
     }
 }

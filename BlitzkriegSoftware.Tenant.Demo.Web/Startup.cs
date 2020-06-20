@@ -45,16 +45,41 @@ namespace BlitzkriegSoftware.Tenant.Demo.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
+            _ = services.AddAuthentication(AzureADDefaults.AuthenticationScheme)
                 .AddAzureAD(options => this.Configuration.Bind("AzureAd", options));
 
-            services.AddLocalization(options => options.ResourcesPath = "Resources");
+            _ = services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-            services.AddMvc()
+            _ = services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                    policy.AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowAnyOrigin());
+            });
+
+            _ = services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromMilliseconds(31536000);
+            });
+
+            _ = services.AddAntiforgery(options =>
+            {
+                options.FormFieldName = "AntiforgeryFieldname";
+                options.HeaderName = "X-CSRF-TOKEN-HEADERNAME";
+                options.SuppressXFrameOptionsHeader = false;
+            });
+
+            _ = services.AddMvc(
+                config =>
+                {
+                    config.Filters.Add(typeof(Libs.GlobalExceptionFilter));
+                })
                 .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
                 .AddDataAnnotationsLocalization();
 
-            services.Configure<RequestLocalizationOptions>(opts =>
+            _ = services.Configure<RequestLocalizationOptions>(opts =>
             {
                 var supportedCultures = new List<CultureInfo>();
 
@@ -72,15 +97,15 @@ namespace BlitzkriegSoftware.Tenant.Demo.Web
                 opts.SupportedUICultures = supportedCultures;
             });
 
-
-            services.AddControllersWithViews(options =>
+            _ = services.AddControllersWithViews(options =>
             {
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
                 options.Filters.Add(new AuthorizeFilter(policy));
             });
-            services.AddRazorPages();
+
+            _ = services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,10 +118,26 @@ namespace BlitzkriegSoftware.Tenant.Demo.Web
             else
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
 
                 app.UseHsts();
             }
+
+            app.Use(async (context, next) =>
+            {
+                // Prohibited Headers
+                _ = context.Response.Headers.Remove("splitsdkversion");
+                _ = context.Response.Headers.Remove("x-aspnet-version");
+                _ = context.Response.Headers.Remove("x-powered-by");
+                _ = context.Response.Headers.Remove("server");
+
+                // Required Headers
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+                context.Response.Headers.Add("X-Frame-Options", "DENY");
+                context.Response.Headers.Add("X-Xss-Protection", "1;mode=block");
+
+                await next().ConfigureAwait(false);
+            });
+
             app.UseHttpsRedirection();
 
             var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(this.Cultures[0])

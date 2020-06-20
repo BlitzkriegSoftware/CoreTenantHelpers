@@ -73,6 +73,8 @@ namespace BlitzkriegSoftware.Tenant.Demo.Web.Controllers
 
         protected void Enrich(ref TenantUserProfileBase model)
         {
+            if (model == null) return;
+
             foreach (var c in this.User.Claims)
             {
                 var key = c.Type;

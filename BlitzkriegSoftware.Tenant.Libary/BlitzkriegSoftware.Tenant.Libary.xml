@@ -337,6 +337,12 @@
             Configuration
             </summary>
         </member>
+        <member name="M:BlitzkriegSoftware.Tenant.TenantBase.ToString">
+            <summary>
+            Debug String
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:BlitzkriegSoftware.Tenant.TenantProvider`1">
             <summary>
             Tenant Provider
